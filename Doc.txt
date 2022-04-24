@@ -19,9 +19,9 @@ TODO MIGUEL
 	padding uitzoeken
 	zwart wit filter
 TODO SEBBE
-	functie maken header uitlezen
+	functie maken header uitlezen (klaar)
 	smooth filter
-	Foto inlezen
+	Foto inlezen (klaar voor zonder padding)
 	
 TODO algemeen
 	scaler
