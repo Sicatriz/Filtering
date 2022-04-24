@@ -15,3 +15,21 @@ zero padding fix
 references 
 	wikipedia: https://en.wikipedia.org/wiki/BMP_file_format
 	
+TODO MIGUEL
+	padding uitzoeken
+	zwart wit filter
+TODO SEBBE
+	functie maken header uitlezen
+	smooth filter
+	Foto inlezen
+	
+TODO algemeen
+	scaler
+	rand
+	andere shadings
+	bronvermelding
+	menu
+	
+	
+	xxxxxxxx
+	xxxo
