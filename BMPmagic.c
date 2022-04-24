@@ -9,7 +9,16 @@
 
 int main(int argc, char *argv[])
 {
-	FILE *path = fopen(argv[1], "r");
+	if (argv[1]=="--help" || argv[1]== "--h")
+	{
+		/* code TO DO MIGUEL*/ 
+	}
+	else
+	{
+		FILE *path = fopen(argv[1], "r");
+	}
+	
+
 	FILE *newf = fopen(OUTPUT,"w+");
 	
 	if(path == NULL) //Test of het open van de file gelukt is!
