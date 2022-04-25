@@ -1,5 +1,6 @@
 //gcc -Wall -pedantic BMPmagic.c -o run
-//run C:\Users\Administrator\Desktop\Untitled.bmp
+// SEBBE run C:\Users\Administrator\Desktop\Untitled.bmp
+// MIGUEL run test.bmp
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,18 +8,19 @@
 
 #define OUTPUT "output.BMP"
 
-void HeaderLezen(FILE *filef, unsigned char* Head, signed int *h, signed int *b );
+void HeaderLezen();
 
 int main(int argc, char *argv[])
 {
 
-	unsigned char bmpHeader[54] = "";
-    char *image = NULL; 
+	unsigned char bmpHeader[54] = {0};
+    unsigned char *image = NULL; 
 	signed int *breedte = NULL;
     signed int *hoogte = NULL;
 	int padding = 0;
 	int imagesize = 0;
 	FILE *path = NULL;
+	FILE *output = NULL;
 	
 	if (argv[1]=="--help" || argv[1]== "--h")
 	{
@@ -27,6 +29,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		path = fopen(argv[1], "rb");
+		output = fopen(OUTPUT, "wb");
 	}
 
 	if(path == NULL) //Test of het open van de file gelukt is!
@@ -40,7 +43,7 @@ int main(int argc, char *argv[])
 	printf("%d", *breedte);
 	padding = *breedte %4;
 	imagesize = *hoogte * *breedte;
-	image = (char *) malloc(imagesize);
+	image = (unsigned char *) malloc(imagesize);
 	
 	if(image == NULL)
 	{
@@ -58,28 +61,36 @@ int main(int argc, char *argv[])
 	{
 		fread(image, 1, imagesize, path);
 	}
-
+	fclose(output);
 	fclose(path);
 	free(image);
 	
 	return 0;
 }
 
-void HeaderLezen(FILE *filef, unsigned char* Head, signed int *h, signed int *b)
+void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *b)
 {
 	//header inlezen
 	printf("1\n");
-	fread(Head, 1, 54, filef);
+	fread(header, 1, 54, filef);
 	
 	// haal de filetype, hoogte en breedte uit de header
 	printf("2\n");
 	char filetype[2]="";
-    b = (signed int*)&Head[18];
-    h = (signed int*)&Head[22];
+
+
+	int breedte = 0;
+
+    breedte = (header[21] << 24) | (header[20] << 16) | (header[19] << 8) | (header[18]);
+	b = &breedte;
+    printf("de breedte van mijn afbeeding is = %d \n", *b);
+/*    *h = (*header[25] << 24) | (*header[24] << 16) | (*header[23] << 8) | (*header[22]);
+    printf("de breedte van mijn afbeeding is = %d \n", *h);
+*/
 	printf("%d \t %p\n", *b, b);
-	int bitformat = *(int*)&Head[28];
+	int bitformat = *(int*)&header[28];
 	
-	strncpy(filetype, Head, 2);
+	strncpy(filetype, header, 2);
 	
 	if(strncmp(filetype, "BM",2)!=0)
 	{
@@ -92,7 +103,7 @@ void HeaderLezen(FILE *filef, unsigned char* Head, signed int *h, signed int *b)
 	}
 	for(int i=0; i<54; i++)
 	{
-		putchar(Head[i]);
+		putchar(header[i]);
 	}
 	printf("\n3\n");
 }
