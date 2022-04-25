@@ -1,5 +1,5 @@
 //gcc -Wall -pedantic BMPmagic.c -o run
-//run C:\Users\sebbe\Desktop\Untitled.bmp
+//run C:\Users\Administrator\Desktop\Untitled.bmp
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,52 +7,47 @@
 
 #define OUTPUT "output.BMP"
 
-void HeaderLezen(FILE *file, char* Head, int *h, int *b );
+void HeaderLezen(FILE *filef, unsigned char* Head, signed int *h, signed int *b );
 
 int main(int argc, char *argv[])
 {
-	char *bmpHeader = "";
+
+	unsigned char bmpHeader[54] = "";
     char *image = NULL; 
-	int *breedte = NULL;
-    int *hoogte = NULL;
+	signed int *breedte = NULL;
+    signed int *hoogte = NULL;
 	int padding = 0;
 	int imagesize = 0;
-	
-	
-	
-	
-	
 	FILE *path = NULL;
+	
 	if (argv[1]=="--help" || argv[1]== "--h")
 	{
 		/* code TO DO MIGUEL*/ 
 	}
 	else
 	{
-		path = fopen(argv[1], "r");
+		path = fopen(argv[1], "rb");
 	}
-	
+
+	if(path == NULL) //Test of het open van de file gelukt is!
+    {
+        printf("Something went wrong while trying to open %s\n", argv[1]);
+        return -1;
+    }
+
+	printf("0\n");
 	HeaderLezen(path, bmpHeader, hoogte, breedte);
+	printf("%d", *breedte);
 	padding = *breedte %4;
 	imagesize = *hoogte * *breedte;
 	image = (char *) malloc(imagesize);
 	
-
-	//FILE *newf = fopen(OUTPUT,"wb+");
+	if(image == NULL)
+	{
+		printf("mem alloc failed");
+		return -2;
+	}
 	
-	if(path == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to open %s\n", path);
-        exit(EXIT_FAILURE);
-    }
-	
-	/*if(newf == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to create %s\n", newf);
-        exit(EXIT_FAILURE);
-    }*/
-	
-		
 	//skip paddings
 	if(padding)
 	{
@@ -61,30 +56,27 @@ int main(int argc, char *argv[])
 	//lees alles
 	else
 	{
-		fread(image, sizeof(unsigned char), imagesize, path);
+		fread(image, 1, imagesize, path);
 	}
-	
-	
+
 	fclose(path);
-	/*if(newf != NULL)
-	{
-		fclose(newf);
-	}*/
-	
+	free(image);
 	
 	return 0;
 }
 
-void HeaderLezen(FILE *file, char* Head, int *h, int *b)
+void HeaderLezen(FILE *filef, unsigned char* Head, signed int *h, signed int *b)
 {
 	//header inlezen
-	fread(Head, sizeof(unsigned char), 54, file);
+	printf("1\n");
+	fread(Head, 1, 54, filef);
 	
 	// haal de filetype, hoogte en breedte uit de header
-	
+	printf("2\n");
 	char filetype[2]="";
-    b = (int*)&Head[18];
-    h = (int*)&Head[22];
+    b = (signed int*)&Head[18];
+    h = (signed int*)&Head[22];
+	printf("%d \t %p\n", *b, b);
 	int bitformat = *(int*)&Head[28];
 	
 	strncpy(filetype, Head, 2);
@@ -98,7 +90,11 @@ void HeaderLezen(FILE *file, char* Head, int *h, int *b)
 	{
 		printf("bitmapfile is niet 24 bits\n");
 	}
-	
+	for(int i=0; i<54; i++)
+	{
+		putchar(Head[i]);
+	}
+	printf("\n3\n");
 }
 
 
