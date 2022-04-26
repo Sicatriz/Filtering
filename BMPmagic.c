@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	
 	intro();
 
-	if (argv[1]=="--help" || argv[1]== "--h")
+	if (strncmp(argv[1],"--help", 6) || strncmp(argv[1], "--h", 3))
 	{
 		/* code TO DO MIGUEL*/ 
 	}
@@ -90,7 +90,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 /*    *h = (*header[25] << 24) | (*header[24] << 16) | (*header[23] << 8) | (*header[22]);
     printf("de breedte van mijn afbeeding is = %d \n", *h);
 */
-	printf("%d \t %p\n", *b, b);
+	//printf("%d \t %p\n", *b, b);
 	int bitformat = *(int*)&header[28];
 	
 	strncpy(filetype, header, 2);
