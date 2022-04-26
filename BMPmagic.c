@@ -10,6 +10,7 @@
 
 void HeaderLezen();
 void intro();
+void help();
 
 int main(int argc, char *argv[])
 {
@@ -25,15 +26,20 @@ int main(int argc, char *argv[])
 	
 	intro();
 
-	if (strncmp(argv[1],"--help", 6) || strncmp(argv[1], "--h", 3))
+		if (strncmp(argv[1],"--help", 6) || strncmp(argv[1], "--h", 3))
 	{
-		/* code TO DO MIGUEL*/ 
+		system("cls");
+		intro();
+		help();
 	}
 	else
 	{
 		path = fopen(argv[1], "rb");
 		output = fopen(OUTPUT, "wb");
 	}
+
+
+	
 
 	if(path == NULL) //Test of het open van de file gelukt is!
     {
@@ -139,10 +145,24 @@ void intro()
 	printf("       ___________________________________________________________________________________________________________________________________________________________________________________________________\n");
 	printf("        ___________________________________________________________________________________________________________________________________________________________________________________________________\n");
 
-
-	
 }
 
-
+void help()
+{
+	printf("\n\n********************************************\n\n");
+	printf("COMMANDO'S BMP MAGIC:\n");
+	printf("\n\n********************************************\n\n");
+	printf("\nRUN		Start het programma in normale modus.\n\n");
+	printf("Om een snelle actie vanuit de prompt zonder menu:\n\n");
+	printf("RUN [inputfile.bmp] -o [outputfile] -f [filtertype]\n\n");
+	printf("FILTER COMMANDO'S\n"); 
+	printf("SMOOTH				vervaag afbeelding.\n");
+	printf("BW					maak een zwart/wit afbeelding.\n");
+	printf("SCALE#				schaal afbeelding naar gekozen factor tussen 1 en 4. (vervang # met een getal tussen 1 en 5)\n");
+	printf("BLUE				pas blauwfilter toe.\n");
+	printf("RED				pas roodfilter toe.\n");
+	printf("GREEN				pas groenfilter toe.\n");
+	printf("WH				    pas WARHOLfilter toe.\n");
+}
 
 
