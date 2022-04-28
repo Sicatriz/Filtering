@@ -1,5 +1,5 @@
 //gcc -Wall -pedantic BMPmagic.c -o run
-// SEBBE run C:\Users\Administrator\Desktop\Untitled.bmp
+// SEBBE run C:\Users\sebbe\Desktop\Untitled.bmp
 // MIGUEL run test.bmp
 
 #include <stdio.h>
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 {
 
 	unsigned char bmpHeader[54] = {0};
-    unsigned char *image = NULL; 
+	unsigned char *array =NULL;
 	signed int *breedte = (int*) malloc(sizeof(int));
     signed int *hoogte = (int*) malloc(sizeof(int));
 	int *padding = (int*) malloc(sizeof(int));
@@ -28,11 +28,9 @@ int main(int argc, char *argv[])
 	FILE *path = NULL;
 	FILE *output = NULL;
 	
-	
-	
 	intro();
 
-		if (strncmp(argv[1],"--help", 6) || strncmp(argv[1], "--h", 3))
+	if (strncmp(argv[1],"--help", 6)==0 || strncmp(argv[1], "--h", 3)==0)
 	{
 		system("cls");
 		intro();
@@ -44,41 +42,26 @@ int main(int argc, char *argv[])
 		output = fopen(OUTPUT, "wb");
 	}
 
-
-	
-
 	if(path == NULL) //Test of het open van de file gelukt is!
     {
         printf("Something went wrong while trying to open %s\n", argv[1]);
         return -1;
     }
 
-	printf("0\n");
+	//printf("0\n");
 	HeaderLezen(path, bmpHeader, hoogte, breedte);
-	printf("%d", *breedte);
-	*padding = 4- (*breedte *24 % 32);
-	*imagesize = *hoogte * *breedte *3;
-	image = (unsigned char *) malloc(*imagesize);
+	//printf("%d", *hoogte);
+	*padding = *breedte *24 % 4;
+	*imagesize = *hoogte**breedte*3;
+	array = (unsigned char *) malloc(sizeof(imagesize));
+	//printf("%d\n", *imagesize);
+	ImageLezen(path, breedte, hoogte, imagesize, padding, array);
 	
-	if(image == NULL)
-	{
-		printf("mem alloc failed");
-		return -2;
-	}
+	//4 - (*breedte *24 % 32);
 	
-	//skip paddings
-	if(padding)
-	{
-		/*code TO DO MIGUEL*/
-	}
-	//lees alles
-	else
-	{
-		fread(image, 1, *imagesize, path);
-	}
+	
 	fclose(output);
 	fclose(path);
-	free(image);
 	
 	return 0;
 }
@@ -86,22 +69,19 @@ int main(int argc, char *argv[])
 void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *b)
 {
 	//header inlezen
-	printf("1\n");
+	//printf("1\n");
 	fread(header, 1, 54, filef);
 	
 	// haal de filetype, hoogte en breedte uit de header
-	printf("2\n");
+	//printf("2\n");
 	char filetype[2]="";
 
+    *b =(header[21] << 24) | (header[20] << 16) | (header[19] << 8) | (header[18]);
+	
+    //printf("de breedte van mijn afbeeding is = %d \n", *b);
+    *h = (header[25] << 24) | (header[24] << 16) | (header[23] << 8) | (header[22]);
+    //printf("de breedte van mijn afbeeding is = %d \n", *h);
 
-	int breedte = 0;
-
-    breedte = (header[21] << 24) | (header[20] << 16) | (header[19] << 8) | (header[18]);
-	b = &breedte;
-    printf("de breedte van mijn afbeeding is = %d \n", *b);
-/*    *h = (*header[25] << 24) | (*header[24] << 16) | (*header[23] << 8) | (*header[22]);
-    printf("de breedte van mijn afbeeding is = %d \n", *h);
-*/
 	//printf("%d \t %p\n", *b, b);
 	int bitformat = *(int*)&header[28];
 	
@@ -116,20 +96,68 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	{
 		printf("bitmapfile is niet 24 bits\n");
 	}
-	for(int i=0; i<54; i++)
+	/*for(int i=0; i<54; i++)
 	{
 		putchar(header[i]);
 	}
-	printf("\n3\n");
+	printf("\n3\n");*/
 }
 
-void ImageLezen()
+void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
+	unsigned char afbeelding [*bre*3+*pad][*ho]; 
+	printf("\n\n%d\n\n",*pad);
 	
+	if(arr == NULL)
+	{
+		printf("mem alloc failed");
+		exit(EXIT_FAILURE);
+	}
+	
+	printf("0\n");
+	fread(arr, 1, *grootte, fp);
+	printf("1\n");
+	//printf("%d", *grootte);
+	for(int i=0; i<*grootte; i++)
+	{
+		printf("%d ", arr[i]);
+		if(i%32==0)
+		{
+			printf("\n");
+		}
+		
+	}
+
+	/*for(int i=1; i<*ho; i++)
+	{
+		for(int j=0; j<*bre*3+*pad-1; j++)
+		{
+			afbeelding[i-1][j] = arr[i*j];
+		}
+	}
+	for(int i=0; i<*ho; i++)
+	{
+		for(int j=0; j<(*bre*3)+*pad-1; j++)
+		{
+			printf("%d ",afbeelding[i][j]);
+		}
+		printf("\n\n");
+	} */
+	if(pad)
+	{
+		/*code TO DO MIGUEL*/
+	} 
+	//lees alles
+	else
+	{
+		
+	}
+	free(arr);
 }
 
 void intro()
 {
+	system("color a");
 	printf("____________________________________________________________________________________________________________________________________________________________________________________\n");
 	printf(" ____________________________________________________________________________________________________________________________________________________________________________________\n");
 	printf("  ____________________________________________________________________________________________________________________________________________________________________________________\n");
