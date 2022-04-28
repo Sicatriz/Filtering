@@ -103,7 +103,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	printf("\n3\n");*/
 }
 
-void (FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
+void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	unsigned char afbeelding [*bre*3+*pad][*ho]; 
 	//printf("\n\n%d\n\n",*pad);
@@ -118,29 +118,35 @@ void (FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 	fread(arr, 1, *grootte, fp);
 	//printf("1\n");
 	//printf("%d", *grootte);
-	for(int i=0; i<*grootte; i++)
+	/*for(int i=0; i<*grootte; i++)
 	{
-		printf("%d ", arr[i]);
+		printf("%x ", arr[i]);
 		
 		
-	}
+	}*/
 	printf("\n\n");
 	
-	for(int i=1; i<*ho; i++)
+	for(int i=0; i<*ho; i++)
 	{
 		for(int j=0; j<*bre*3/*+*pad*/; j++)
 		{
-			afbeelding[i-1][j] = arr[i*j];
-		}
-	}
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<(*bre*3)/*+*pad*/; j++)
-		{
-			printf("%d ",afbeelding[i][j]);
+			if(j%3==0)
+			{
+				printf(" | ");
+			}
+			afbeelding[i][j] = arr[(i**bre)+j];
+			printf("%x ",afbeelding[i][j]);
 		}
 		printf("\n\n");
-	} 
+	}
+	/*for(int i=0; i<*ho; i++)
+	{
+		for(int j=0; j<(*bre*3)+*pad; j++)
+		{
+			printf("%x ",afbeelding[i][j]);
+		}
+		printf("\n\n");
+	}*/
 	
 	if(pad)
 	{
