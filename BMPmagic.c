@@ -9,20 +9,26 @@
 #define OUTPUT "output.BMP"
 
 void HeaderLezen();
+void ImageLezen();
 void intro();
 void help();
+
+
+
 
 int main(int argc, char *argv[])
 {
 
 	unsigned char bmpHeader[54] = {0};
     unsigned char *image = NULL; 
-	signed int *breedte = NULL;
-    signed int *hoogte = NULL;
-	int padding = 0;
-	int imagesize = 0;
+	signed int *breedte = (int*) malloc(sizeof(int));
+    signed int *hoogte = (int*) malloc(sizeof(int));
+	int *padding = (int*) malloc(sizeof(int));
+	int *imagesize = (int*) malloc(sizeof(int));
 	FILE *path = NULL;
 	FILE *output = NULL;
+	
+	
 	
 	intro();
 
@@ -50,9 +56,9 @@ int main(int argc, char *argv[])
 	printf("0\n");
 	HeaderLezen(path, bmpHeader, hoogte, breedte);
 	printf("%d", *breedte);
-	padding = *breedte %4;
-	imagesize = *hoogte * *breedte;
-	image = (unsigned char *) malloc(imagesize);
+	*padding = 4- (*breedte *24 % 32);
+	*imagesize = *hoogte * *breedte *3;
+	image = (unsigned char *) malloc(*imagesize);
 	
 	if(image == NULL)
 	{
@@ -68,7 +74,7 @@ int main(int argc, char *argv[])
 	//lees alles
 	else
 	{
-		fread(image, 1, imagesize, path);
+		fread(image, 1, *imagesize, path);
 	}
 	fclose(output);
 	fclose(path);
@@ -115,6 +121,11 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 		putchar(header[i]);
 	}
 	printf("\n3\n");
+}
+
+void ImageLezen()
+{
+	
 }
 
 void intro()

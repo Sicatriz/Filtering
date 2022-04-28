@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
                 menuKeuze = 0;
                 printf("[1]  Filtertype kiezen\n");
                 printf("[2]  Programma beeindigen\n");
-                scanf("%d", menuKeuze);
+                scanf("%d", &menuKeuze);
                 if (menuKeuze == 1)
                 {
                     nextState = FilterKeuze_State;
