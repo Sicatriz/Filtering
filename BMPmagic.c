@@ -59,7 +59,11 @@ int main(int argc, char *argv[])
 	
 	//4 - (*breedte *24 % 32);
 	
-	
+	free(breedte);
+	free(hoogte);
+	free(padding);
+	free(imagesize);
+	free(array);
 	fclose(output);
 	fclose(path);
 	
@@ -118,12 +122,12 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	fread(arr, 1, *grootte, fp);
 	//printf("1\n");
 	//printf("%d", *grootte);
-	/*for(int i=0; i<*grootte; i++)
+	for(int i=0; i<*grootte; i++)
 	{
 		printf("%x ", arr[i]);
 		
 		
-	}*/
+	}
 	printf("\n\n");
 	
 	for(int i=0; i<*ho; i++)
@@ -157,7 +161,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	{
 		
 	}
-	free(arr);
+	
 }
 
 void intro()
