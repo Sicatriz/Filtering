@@ -13,6 +13,7 @@ void intro();
 void help();
 void HeaderLezen();
 void ImageLezen();
+void FilterBw();
 
 
 
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
 	unsigned char image[*breedte*3][*hoogte];
 	
 	ImageLezen(path, breedte, hoogte, imagesize, padding, array, image);
+	FilterBw(path, breedte, hoogte, imagesize, padding, image);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -197,3 +199,27 @@ void help()
 }
 
 
+// werkt nog niet, output nakijken (shifts)
+void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char afbeelding[*bre*3][*ho])
+{
+	int kleur = 0;
+	for(int i=0; i<*ho; i++)
+	{
+		for(int j=0; j<*bre*3/*+*pad*/; j++)
+		{
+			if(j%3==0)
+			{
+				printf(" | ");
+			}
+			kleur = afbeelding[i][j];
+			printf("\n\n\nafbleeding ij = %x", afbeelding[i][j]);
+			printf("\nkleur is: %x\n", kleur);
+			kleur = kleur/3;
+			printf("\nkleur /3 is: %x\n", kleur);
+			afbeelding[i][j] = 	kleur;
+			printf("\nafbeelding IJ %x ",afbeelding[i][j]);
+	
+		}
+		// printf("\n\n");
+	}
+}
