@@ -9,17 +9,17 @@
 
 #define OUTPUT "output.BMP"
 
-void HeaderLezen();
-void ImageLezen();
 void intro();
 void help();
+void HeaderLezen();
+void ImageLezen();
 
 
 
 
 int main(int argc, char *argv[])
 {
-
+	unsigned char image [*bre*3+*pad][*ho]; 
 	unsigned char bmpHeader[54] = {0};
 	unsigned char *array =NULL;
 	signed int *breedte = (int*) malloc(sizeof(int));
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	*imagesize = *hoogte**breedte*3;
 	array = (unsigned char *) malloc(sizeof(imagesize));
 	//printf("%d\n", *imagesize);
-	ImageLezen(path, breedte, hoogte, imagesize, padding, array);
+	ImageLezen(path, breedte, hoogte, imagesize, padding, array, image);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -108,9 +108,9 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	printf("\n3\n");*/
 }
 
-void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
+void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, unsigned char afbeelding[][])
 {
-	unsigned char afbeelding [*bre*3+*pad][*ho]; 
+	
 	//printf("\n\n%d\n\n",*pad);
 	char input =0;
 	
@@ -124,12 +124,10 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	fread(arr, 1, *grootte, fp);
 	//printf("1\n");
 	//printf("%d", *grootte);
-	for(int i=0; i<*grootte; i++)
+	/*for(int i=0; i<*grootte; i++)
 	{
 		printf("%x ", arr[i]);
-		
-		
-	}
+	}*/
 	printf("\n\n");
 	
 	for(int i=0; i<*ho; i++)
@@ -145,17 +143,6 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 		}
 		printf("\n\n");
 	}
-	
-	if(pad)
-	{
-		/*code TO DO MIGUEL*/
-	} 
-	//lees alles
-	else
-	{
-		
-	}
-	
 }
 
 void intro()
