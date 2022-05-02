@@ -1,10 +1,11 @@
-//gcc -Wall -pedantic BMPmagic.c -o run
+// gcc -Wall -pedantic BMPmagic.c -o run
 // SEBBE run C:\Users\sebbe\Desktop\Untitled.bmp
 // MIGUEL run test.bmp
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 #define OUTPUT "output.BMP"
 
@@ -107,6 +108,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 {
 	unsigned char afbeelding [*bre*3+*pad][*ho]; 
 	//printf("\n\n%d\n\n",*pad);
+	char input =0;
 	
 	if(arr == NULL)
 	{
@@ -134,19 +136,11 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 			{
 				printf(" | ");
 			}
-			afbeelding[i][j] = arr[(i**bre)+j];
+			afbeelding[i][j] = arr[(i**bre*3)+j];
 			printf("%x ",afbeelding[i][j]);
 		}
 		printf("\n\n");
 	}
-	/*for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<(*bre*3)+*pad; j++)
-		{
-			printf("%x ",afbeelding[i][j]);
-		}
-		printf("\n\n");
-	}*/
 	
 	if(pad)
 	{
