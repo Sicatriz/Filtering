@@ -1,5 +1,5 @@
 // gcc -Wall -pedantic BMPmagic.c -o run
-// SEBBE run C:\Users\sebbe\Desktop\Untitled.bmp
+// SEBBE run C:\Users\sebbe\Desktop\test.bmp
 // MIGUEL run test.bmp
 
 #include <stdio.h>
@@ -14,7 +14,7 @@ void help();
 void HeaderLezen();
 void ImageLezen();
 void FilterBw();
-
+void FilterBlur();
 
 
 
@@ -57,10 +57,11 @@ int main(int argc, char *argv[])
 	*imagesize = *hoogte**breedte*3;
 	array = (unsigned char *) malloc(sizeof(imagesize));
 	//printf("%d\n", *imagesize);
-	unsigned char image[*breedte*3][*hoogte];
+	//unsigned char image[*breedte*3][*hoogte];
 	
-	ImageLezen(path, breedte, hoogte, imagesize, padding, array, image);
-	FilterBw(path, breedte, hoogte, imagesize, padding, array, image);
+	ImageLezen(path, breedte, hoogte, imagesize, padding, array/*, image*/);
+	//FilterBw(path, breedte, hoogte, imagesize, padding, array/*, image*/);
+	FilterBlur(path, breedte, hoogte, imagesize, padding, array);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -112,7 +113,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	printf("\n3\n");*/
 }
 
-void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, unsigned char afbeelding[*bre*3][*ho])
+void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr/*, unsigned char afbeelding[*bre*3][*ho]*/)
 {
 	
 	//printf("\n\n%d\n\n",*pad);
@@ -142,16 +143,11 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 			{
 				printf(" | ");
 			}
-			afbeelding[i][j] = arr[(i**bre*3)+j];
-			printf("%x ",afbeelding[i][j]);
+			//afbeelding[i][j] = arr[(i**bre*3)+j];
+			printf("%x ",arr[(i**bre*3)+j]);
 		}
 		printf("\n\n");
 	}
-
-
-
-
-
 
 /*	printf("\n\n");
 	for(int i=0; i<*ho; i++)
@@ -165,6 +161,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	printf("\n\n");
 */
 }
+
 
 void intro()
 {
@@ -217,7 +214,7 @@ void help()
 
 
 // werkt nog niet, output nakijken (shifts)
-void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, unsigned char afbeelding[*bre*3][*ho])
+void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr/*, unsigned char afbeelding[*bre*3][*ho]*/)
 {
 
 //**************
@@ -253,4 +250,375 @@ void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned ch
 		//printf("\n\n");
 	}
 
+}
+
+
+void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
+{
+	int blauw = 0;
+	int groen = 0;
+	int rood = 0;
+	
+	for(int i=0; i<*ho; i++)
+	{
+		printf("\n\n");
+		for(int j=0; j<*bre*3; j+=3)
+		{
+			
+			blauw = 0;
+			groen = 0;
+			rood = 0;
+			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+			
+			//bovenste pixels
+			if(i==0)
+			{
+				//linkerbovenhoek
+				if(j==0)
+				{
+				
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					//rechts onder
+					blauw += arr[((i+1)**bre*3)+j+3];
+					groen += arr[((i+1)**bre*3)+j+1+3];
+					rood  += arr[((i+1)**bre*3)+j+3+2];
+				
+				
+					blauw = blauw/4;
+					groen = groen/4;
+					rood  = rood/4;
+				}
+				
+				//rechterbovenhoek
+				else if(j==*bre*3-3)
+				{
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//links onder
+					blauw += arr[((i+1)**bre*3)+j-3];
+					groen += arr[((i+1)**bre*3)+j-2];
+					rood  += arr[((i+1)**bre*3)+j-1];
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					
+					blauw = blauw/4;
+					groen = groen/4;
+					rood  = rood/4;
+				}
+				//boven midden
+				else
+				{
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					
+					
+					//links onder
+					blauw += arr[((i+1)**bre*3)+j-3];
+					groen += arr[((i+1)**bre*3)+j-2];
+					rood  += arr[((i+1)**bre*3)+j-1];
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					//rechts onder
+					blauw += arr[((i+1)**bre*3)+j+3];
+					groen += arr[((i+1)**bre*3)+j+1+3];
+					rood  += arr[((i+1)**bre*3)+j+3+2];
+					
+					
+					
+					blauw = blauw/6;
+					groen = groen/6;
+					rood  = rood/6;
+				}
+			}
+			//onderste pixels
+			else if(i==*ho-1)
+			{
+				//linkeronderhoek
+				if(j==0)
+				{
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					//rechts boven
+					blauw += arr[((i-1)**bre*3)+j+3];
+					groen += arr[((i-1)**bre*3)+j+1+3];
+					rood  += arr[((i-1)**bre*3)+j+2+3];
+					
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+2+3];
+					
+					
+					blauw = blauw/4;
+					groen = groen/4;
+					rood  = rood/4;
+				}
+				
+				//rechteronderhoek
+				else if(j==*bre*3-3)
+				{
+					//links boven
+					blauw += arr[((i-1)**bre*3)+j-3];
+					groen += arr[((i-1)**bre*3)+j-2];
+					rood  += arr[((i-1)**bre*3)+j-1];
+					
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					
+					blauw = blauw/4;
+					groen = groen/4;
+					rood  = rood/4;
+				
+				}
+				//ondermidden
+				else
+				{
+					//links boven
+					blauw += arr[((i-1)**bre*3)+j-3];
+					groen += arr[((i-1)**bre*3)+j-2];
+					rood  += arr[((i-1)**bre*3)+j-1];
+					
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					//rechts boven
+					blauw += arr[((i-1)**bre*3)+j+3];
+					groen += arr[((i-1)**bre*3)+j+1+3];
+					rood  += arr[((i-1)**bre*3)+j+3+2];
+					
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					blauw = blauw/6;
+					groen = groen/6;
+					rood  = rood/6;
+				}
+			}
+			//midden
+			else
+			{
+				//links
+				if(j==0)
+				{
+					//links boven
+					blauw += arr[((i-1)**bre*3)+j-3];
+					groen += arr[((i-1)**bre*3)+j-2];
+					rood  += arr[((i-1)**bre*3)+j-1];
+					
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					//rechts boven
+					blauw += arr[((i-1)**bre*3)+j+3];
+					groen += arr[((i-1)**bre*3)+j+1+3];
+					rood  += arr[((i-1)**bre*3)+j+3+2];
+					
+					
+					
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					
+					blauw = blauw/6;
+					groen = groen/6;
+					rood  = rood/6;
+				}
+				//rechts
+				else if(j==*bre*3-3)
+				{
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					
+					
+					//links onder
+					blauw += arr[((i+1)**bre*3)+j-3];
+					groen += arr[((i+1)**bre*3)+j-2];
+					rood  += arr[((i+1)**bre*3)+j-1];
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					//rechts onder
+					blauw += arr[((i+1)**bre*3)+j+3];
+					groen += arr[((i+1)**bre*3)+j+1+3];
+					rood  += arr[((i+1)**bre*3)+j+3+2];
+					
+					
+					blauw = blauw/6;
+					groen = groen/6;
+					rood  = rood/6;
+				}
+				//normaal
+				else
+				{
+					//links boven
+					blauw += arr[((i-1)**bre*3)+j-3];
+					groen += arr[((i-1)**bre*3)+j-2];
+					rood  += arr[((i-1)**bre*3)+j-1];
+					
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					//rechts boven
+					blauw += arr[((i-1)**bre*3)+j+3];
+					groen += arr[((i-1)**bre*3)+j+1+3];
+					rood  += arr[((i-1)**bre*3)+j+3+2];
+					
+					//links
+					blauw += arr[(i**bre*3)+j-3];
+					groen += arr[(i**bre*3)+j-2];
+					rood  += arr[(i**bre*3)+j-1];
+					
+					//midden
+					blauw += arr[(i**bre*3)+j];
+					groen += arr[(i**bre*3)+j+1];
+					rood  += arr[(i**bre*3)+j+2];
+					
+					//rechts
+					blauw += arr[(i**bre*3)+j+3];
+					groen += arr[(i**bre*3)+j+1+3];
+					rood  += arr[(i**bre*3)+j+3+2];
+					
+					//links onder
+					blauw += arr[((i+1)**bre*3)+j-3];
+					groen += arr[((i+1)**bre*3)+j-2];
+					rood  += arr[((i+1)**bre*3)+j-1];
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					//rechts onder
+					blauw += arr[((i+1)**bre*3)+j+3];
+					groen += arr[((i+1)**bre*3)+j+1+3];
+					rood  += arr[((i+1)**bre*3)+j+3+2];
+					
+					//gem berekenen
+					blauw = blauw/9;
+					groen = groen/9;
+					rood  = rood/9;
+				}
+			}
+			//gem toekenen
+			arr[(i**bre*3)+j] = blauw;
+			arr[(i**bre*3)+j+1] = groen;
+			arr[(i**bre*3)+j+2] = rood;
+			
+			printf("%x %x %x | \t",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+		}
+	}	
+	
+	printf("\n\n");
+	
 }
