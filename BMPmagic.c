@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	unsigned char image[*breedte*3][*hoogte];
 	
 	ImageLezen(path, breedte, hoogte, imagesize, padding, array, image);
-//	FilterBw(path, breedte, hoogte, imagesize, padding, image);
+	FilterBw(path, breedte, hoogte, imagesize, padding, array, image);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -94,7 +94,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	//printf("%d \t %p\n", *b, b);
 	int bitformat = *(int*)&header[28];
 	
-	strncpy(filetype,(char *) header, 2);
+	strncpy(filetype,(char *)   header, 2);
 	
 	if(strncmp(filetype, "BM",2)!=0)
 	{
@@ -148,38 +148,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 		printf("\n\n");
 	}
 
-//**************
-	//BW filter
-//**************
 
-	int pixel = 0;
-
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j+=3)
-		{
-			if(j%3==0)
-			{
-			//	printf(" | ");
-			}
-			pixel = pixel + arr[(i**bre*3)+j];
-			pixel = pixel + arr[(i**bre*3)+j+1];
-			pixel = pixel + arr[(i**bre*3)+j+2];
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-
-			pixel = pixel / 3;
-
-			arr[(i**bre*3)+j] = pixel;
-			arr[(i**bre*3)+j+1] = pixel;
-			arr[(i**bre*3)+j+2] = pixel;
-
-			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-			pixel =0;
-		}
-
-
-		//printf("\n\n");
-	}
 
 
 
@@ -248,40 +217,40 @@ void help()
 
 
 // werkt nog niet, output nakijken (shifts)
-void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char afbeelding[*bre*3][*ho])
+void FilterBw(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, unsigned char afbeelding[*bre*3][*ho])
 {
-/*	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j++)
-		{
-			if(j%3==0)
-			{
-				printf(" | ");
-			}
-			
-			printf("%x ",afbeelding[i][j]);
-		}
-		printf("\n\n");
-	}
-*/
-	int kleur = 0;
+
+//**************
+	//BW filter
+//**************
+
+	int pixel = 0;
+
 	for(int i=0; i<*ho; i++)
 	{
-		for(int j=0; j<*bre*3; j++)
+		for(int j=0; j<*bre*3; j+=3)
 		{
 			if(j%3==0)
 			{
-				printf(" | ");
+			//	printf(" | ");
 			}
-			kleur = afbeelding[i][j];
-			printf("\n\n\nafbleeding ij = %x", afbeelding[i][j]);
-			printf("\nkleur is: %x\n", kleur);
-			kleur = kleur/3;
-			printf("\nkleur /3 is: %x\n", kleur);
-			afbeelding[i][j] = 	kleur;
-			printf("\nafbeelding IJ %x ",afbeelding[i][j]);
-	
+			pixel = pixel + arr[(i**bre*3)+j];
+			pixel = pixel + arr[(i**bre*3)+j+1];
+			pixel = pixel + arr[(i**bre*3)+j+2];
+			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+
+			pixel = pixel / 3;
+
+			arr[(i**bre*3)+j] = pixel;
+			arr[(i**bre*3)+j+1] = pixel;
+			arr[(i**bre*3)+j+2] = pixel;
+
+			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+			pixel =0;
 		}
-		// printf("\n\n");
+
+
+		//printf("\n\n");
 	}
+
 }
