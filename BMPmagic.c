@@ -113,6 +113,8 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	printf("\n3\n");*/
 }
 
+//test git
+
 void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr/*, unsigned char afbeelding[*bre*3][*ho]*/)
 {
 	
