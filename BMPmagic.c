@@ -481,11 +481,6 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 				//links
 				if(j==0)
 				{
-					//links boven
-					blauw += arr[((i-1)**bre*3)+j-3];
-					groen += arr[((i-1)**bre*3)+j-2];
-					rood  += arr[((i-1)**bre*3)+j-1];
-					
 					//boven
 					blauw += arr[((i-1)**bre*3)+j];
 					groen += arr[((i-1)**bre*3)+j+1];
@@ -497,12 +492,6 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 					rood  += arr[((i-1)**bre*3)+j+3+2];
 					
 					
-					
-					//links
-					blauw += arr[(i**bre*3)+j-3];
-					groen += arr[(i**bre*3)+j-2];
-					rood  += arr[(i**bre*3)+j-1];
-					
 					//midden
 					blauw += arr[(i**bre*3)+j];
 					groen += arr[(i**bre*3)+j+1];
@@ -512,6 +501,19 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 					blauw += arr[(i**bre*3)+j+3];
 					groen += arr[(i**bre*3)+j+1+3];
 					rood  += arr[(i**bre*3)+j+3+2];
+					
+					
+					//onder
+					blauw += arr[((i+1)**bre*3)+j];
+					groen += arr[((i+1)**bre*3)+j+1];
+					rood  += arr[((i+1)**bre*3)+j+2];
+					
+					//rechts onder
+					blauw += arr[((i+1)**bre*3)+j+3];
+					groen += arr[((i+1)**bre*3)+j+1+3];
+					rood  += arr[((i+1)**bre*3)+j+3+2];
+					
+					
 					
 					
 					blauw = blauw/6;
@@ -521,6 +523,17 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 				//rechts
 				else if(j==*bre*3-3)
 				{
+					//links boven
+					blauw += arr[((i-1)**bre*3)+j-3];
+					groen += arr[((i-1)**bre*3)+j-2];
+					rood  += arr[((i-1)**bre*3)+j-1];
+					
+					//boven
+					blauw += arr[((i-1)**bre*3)+j];
+					groen += arr[((i-1)**bre*3)+j+1];
+					rood  += arr[((i-1)**bre*3)+j+2];
+					
+					
 					//links
 					blauw += arr[(i**bre*3)+j-3];
 					groen += arr[(i**bre*3)+j-2];
@@ -530,12 +543,6 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 					blauw += arr[(i**bre*3)+j];
 					groen += arr[(i**bre*3)+j+1];
 					rood  += arr[(i**bre*3)+j+2];
-					
-					//rechts
-					blauw += arr[(i**bre*3)+j+3];
-					groen += arr[(i**bre*3)+j+1+3];
-					rood  += arr[(i**bre*3)+j+3+2];
-					
 					
 					
 					//links onder
@@ -548,10 +555,7 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 					groen += arr[((i+1)**bre*3)+j+1];
 					rood  += arr[((i+1)**bre*3)+j+2];
 					
-					//rechts onder
-					blauw += arr[((i+1)**bre*3)+j+3];
-					groen += arr[((i+1)**bre*3)+j+1+3];
-					rood  += arr[((i+1)**bre*3)+j+3+2];
+					
 					
 					
 					blauw = blauw/6;
@@ -613,7 +617,7 @@ void FilterBlur(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 				}
 			}
 			//gem toekenen
-			arr[(i**bre*3)+j] = blauw;
+			arr[(i**bre*3)+j]   = blauw;
 			arr[(i**bre*3)+j+1] = groen;
 			arr[(i**bre*3)+j+2] = rood;
 			
