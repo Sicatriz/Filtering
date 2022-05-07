@@ -7,6 +7,7 @@
 #include <string.h>
 #include <windows.h>
 
+#define OUTPUT "output.BMP"
 
 void intro();
 void help();
@@ -14,9 +15,6 @@ void HeaderLezen();
 void ImageLezen();
 void FilterBw();
 void FilterBlur();
-void FilterBlauw();
-void FilterGroen();
-void FilterRood();
 
 
 
@@ -30,7 +28,7 @@ int main(int argc, char *argv[])
 	int *padding = (int*) malloc(sizeof(int));
 	int *imagesize = (int*) malloc(sizeof(int));
 	FILE *path = NULL;
-	
+	FILE *output = NULL;
 	
 	intro();
 
@@ -39,17 +37,18 @@ int main(int argc, char *argv[])
 		system("cls");
 		intro();
 		help();
-		return 0;
 	}
 	else
 	{
 		path = fopen(argv[1], "rb");
-		if(path == NULL) //Test of het open van de file gelukt is!
-		{
-			printf("Something went wrong while trying to open %s\n", argv[1]);
-			exit(EXIT_FAILURE);
-		}
+		output = fopen(OUTPUT, "wb");
 	}
+
+	if(path == NULL) //Test of het open van de file gelukt is!
+    {
+        printf("Something went wrong while trying to open %s\n", argv[1]);
+        return -1;
+    }
 
 	//printf("0\n");
 	HeaderLezen(path, bmpHeader, hoogte, breedte);
@@ -60,12 +59,9 @@ int main(int argc, char *argv[])
 	//printf("%d\n", *imagesize);
 	//unsigned char image[*breedte*3][*hoogte];
 	
-	//ImageLezen(path, breedte, hoogte, imagesize, padding, array /*, image*/);
-	//FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array /*, image*/);
-	//FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
-	FilterBlauw(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
-	FilterGroen(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
-	FilterRood(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
+	ImageLezen(path, breedte, hoogte, imagesize, padding, array/*, image*/);
+	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array, output/*, image*/);
+	FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array, output);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -74,6 +70,7 @@ int main(int argc, char *argv[])
 	free(padding);
 	free(imagesize);
 	free(array);
+	fclose(output);
 	fclose(path);
 	
 	return 0;
@@ -209,40 +206,53 @@ void help()
 	printf("RUN [inputfile.bmp] -o [outputfile] -f [filtertype]\n\n");
 	printf("FILTER COMMANDO'S\n"); 
 	printf("SMOOTH				vervaag afbeelding.\n");
-	printf("BW				maak een zwart/wit afbeelding.\n");
+	printf("BW					maak een zwart/wit afbeelding.\n");
 	printf("SCALE#				schaal afbeelding naar gekozen factor tussen 1 en 4. (vervang # met een getal tussen 1 en 5)\n");
 	printf("BLUE				pas blauwfilter toe.\n");
 	printf("RED				pas roodfilter toe.\n");
 	printf("GREEN				pas groenfilter toe.\n");
-	printf("WH				pas WARHOLfilter toe.\n");
+	printf("WH				    pas WARHOLfilter toe.\n");
 }
 
 
-
-void FilterBw(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr/*, unsigned char afbeelding[*bre*3][*ho]*/)
+// werkt nog niet, output nakijken (shifts)
+void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, FILE *out/*, unsigned char afbeelding[*bre*3][*ho]*/)
 {
 
 //**************
 	//BW filter
 //**************
-
-	int pixel = 0;
-	FILE* output = fopen("outputBW.BMP", "wb");
 	
-	if(output == NULL) //Test of het open van de file gelukt is!
+	printf("0");
+	
+	fclose(out);
+	
+	printf("1");
+	
+	out = fopen("Bw.BMP", "wb");
+	
+	printf("2");
+	
+	if(out == NULL) //Test of het open van de file gelukt is!
     {
-        printf("Something went wrong while trying to open %s\n", "outputBW.BMP");
+        printf("Something went wrong while trying to open %s\n", "Bw.BMP");
         exit(EXIT_FAILURE);
     }
+
+
+	int pixel = 0;
 
 	for(int i=0; i<*ho; i++)
 	{
 		for(int j=0; j<*bre*3; j+=3)
 		{
+			if(j%3==0)
+			{
+			//	printf(" | ");
+			}
 			pixel = pixel + arr[(i**bre*3)+j];
 			pixel = pixel + arr[(i**bre*3)+j+1];
 			pixel = pixel + arr[(i**bre*3)+j+2];
-			
 			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
 
 			pixel = pixel / 3;
@@ -252,32 +262,41 @@ void FilterBw(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte
 			arr[(i**bre*3)+j+2] = pixel;
 
 			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-			pixel = 0;
+			pixel =0;
 		}
 
 
 		//printf("\n\n");
 	}
 	
-	fwrite(header, 1, 54, output);
-	fwrite(arr, 1, *grootte, output);
+	printf("\n\n");
 	
-	fclose(output);
+	fwrite(header, 1, 54, out); 
+	fwrite(arr, 1, *grootte, out);
+	
+	fclose(out);
 
 }
 
 
-void FilterBlur(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
+void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, FILE* out)
 {
 	int blauw = 0;
 	int groen = 0;
 	int rood = 0;
-	FILE* output = fopen("outputBLUR.BMP", "wb");
+	printf("0");
 	
+	fclose(out);
 	
-	if(output == NULL) //Test of het open van de file gelukt is!
+	printf("1");
+	
+	out = fopen("Blur.BMP", "wb");
+	
+	printf("2");
+	
+	if(out == NULL) //Test of het open van de file gelukt is!
     {
-        printf("Something went wrong while trying to open %s\n", "outputBLUR.BMP");
+        printf("Something went wrong while trying to open %s\n", "Blur.BMP");
         exit(EXIT_FAILURE);
     }
 	
@@ -645,107 +664,11 @@ void FilterBlur(FILE* fp, unsigned char* header, int * bre, int * ho, int* groot
 		}
 	}	
 	
-	
-	fwrite(header, 1, 54, output);
-	fwrite(arr, 1, *grootte, output);
-	
 	printf("\n\n");
 	
-	fclose(output);
+	fwrite(head, 1, 54, out); 
+	fwrite(arr, 1, *grootte, out);
 	
-}
-//alleen blauw
-void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
-{
-	//ImageLezen(fp, bre, ho, grootte, pad, arr /*, image*/);
-	printf("25\n");
-	FILE* output = fopen("outputBlauw.BMP", "wb");
-	
-	printf("0\n");
-	if(output == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to open %s\n", "outputBlauw.BMP");
-        exit(EXIT_FAILURE);
-    }
-	
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j+=3)
-		{
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-
-			arr[(i**bre*3)+j+1] = 0;
-			arr[(i**bre*3)+j+2] = 0;
-
-			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-		}
-	}
-	
-	fwrite(header, 1, 54, output);
-	fwrite(arr, 1, *grootte, output);
-	
-	fclose(output);
-}
-//alleen groen
-void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
-{
-	ImageLezen(fp, bre, ho, grootte, pad, arr /*, image*/);
-	FILE* output = fopen("outputGroen.BMP", "wb");
-	
-	
-	if(output == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to open %s\n", "outputGroen.BMP");
-        exit(EXIT_FAILURE);
-    }
-	
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j+=3)
-		{
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-
-			arr[(i**bre*3)+j] = 0;
-			arr[(i**bre*3)+j+2] = 0;
-
-			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-		}
-	}
-	
-	fwrite(header, 1, 54, output);
-	fwrite(arr, 1, *grootte, output);
-	
-	fclose(output);
-}
-//alleen rood
-void FilterRood(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
-{
-	ImageLezen(fp, bre, ho, grootte, pad, arr /*, image*/);
-	FILE* output = fopen("outputRood.BMP", "wb");
-	printf("1");
-	
-	if(output == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to open %s\n", "outputRood.BMP");
-        exit(EXIT_FAILURE);
-    }
-	
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j+=3)
-		{
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-
-			arr[(i**bre*3)+j+1] = 0;
-			arr[(i**bre*3)+j] = 0;
-
-			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-		}
-	}
-	
-	fwrite(header, 1, 54, output);
-	fwrite(arr, 1, *grootte, output);
-	
-	fclose(output);
+	fclose(out);
 	
 }
