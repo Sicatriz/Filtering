@@ -13,15 +13,12 @@
 #include <string.h>
 #include <windows.h>
 
-#define OUTPUT_Name "output.BMP"
-
 /*
 * Omschrijving: Introductiescherm
 * @param:   nvt
 * @param: nvt
 * @return:  nvt
 */
-
 void intro();
 
 void help();
@@ -29,7 +26,6 @@ void HeaderLezen();
 void ImageLezen();
 void FilterBw();
 void FilterBlur();
-
 
 int main(int argc, char *argv[])
 {
@@ -101,7 +97,6 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	
 	//hoogte nemen
     *h = (header[25] << 24) | (header[24] << 16) | (header[23] << 8) | (header[22]);
-    
 	
 	int bitformat = *(int*)&header[28];
 	
@@ -118,7 +113,6 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	}
 }
 
-
 void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	if(arr == NULL)
@@ -127,31 +121,9 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 		exit(EXIT_FAILURE);
 	}
 	
-	
 	fread(arr, 1, *grootte, fp);
 	
-/*	
-	for(int i=0; i<*grootte; i++)
-	{
-		printf("%x ", arr[i]);
-	}
-	printf("\n\n");
-	
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j++)
-		{
-			if(j%3==0)
-			{
-				printf(" | ");
-			}
-			printf("%x ",arr[(i**bre*3)+j]);
-		}
-		printf("\n\n");
-	}
-*/
 }
-
 
 void intro()
 {
@@ -189,17 +161,8 @@ void help()
 	printf("\n\n********************************************\n\n");
 	printf("COMMANDO'S BMP MAGIC:\n");
 	printf("\n\n********************************************\n\n");
-	printf("\nRUN		Start het programma in normale modus.\n\n");
-	printf("Om een snelle actie vanuit de prompt zonder menu:\n\n");
-	printf("RUN [inputfile.bmp] -o [outputfile] -f [filtertype]\n\n");
-	printf("FILTER COMMANDO'S\n"); 
-	printf("SMOOTH				vervaag afbeelding.\n");
-	printf("BW					maak een zwart/wit afbeelding.\n");
-	printf("SCALE#				schaal afbeelding naar gekozen factor tussen 1 en 4. (vervang # met een getal tussen 1 en 5)\n");
-	printf("BLUE				pas blauwfilter toe.\n");
-	printf("RED				pas roodfilter toe.\n");
-	printf("GREEN				pas groenfilter toe.\n");
-	printf("WH				    pas WARHOLfilter toe.\n");
+
+	printf("RUN [inputfile.bmp]\n\n");
 }
 
 void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
@@ -208,19 +171,15 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 //**************
 	//BW filter
 //**************
-
 	unsigned char filtered[*grootte];
 	
 	FILE  * out = fopen("bw.bmp", "wb");
-	
-	printf("2");
 	
 	if(out == NULL) //Test of het open van de file gelukt is!
     {
         printf("Something went wrong while trying to open %s\n", "Bw.BMP");
         exit(EXIT_FAILURE);
     }
-
 
 	int pixel = 0;
 
@@ -231,7 +190,6 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 			pixel = pixel + arr[(i**bre*3)+j];
 			pixel = pixel + arr[(i**bre*3)+j+1];
 			pixel = pixel + arr[(i**bre*3)+j+2];
-		//	printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
 
 			pixel = pixel / 3;
 
@@ -239,7 +197,6 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 			filtered[(i**bre*3)+j+1] = pixel;
 			filtered[(i**bre*3)+j+2] = pixel;
 
-		//	printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 			pixel =0;
 		}
 	}
@@ -249,7 +206,6 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 	fclose(out);
 }
 
-
 void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	int blauw = 0;
@@ -257,16 +213,9 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	int rood = 0;
 	int gem =0;
 	unsigned char filtered[*grootte];
-	printf("0");
-	
-	//fclose(out);
-	
-	printf("1");
 	
 	FILE * out = fopen("Blur.BMP", "wb+");
-	
-	printf("2");
-	
+		
 	if(out == NULL) //Test of het open van de file gelukt is!
     {
         printf("Something went wrong while trying to open %s\n", "Blur.BMP");
@@ -275,19 +224,13 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	
 	for(int i=0; i<*ho; i++)
 	{
-	//	printf("\n\n");
 		for(int j=0; j<*bre*3; j+=3)
 		{
 			
 			blauw = 0;
 			groen = 0;
 			rood = 0;
-<<<<<<< HEAD
 			gem = 1;
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
-=======
-		//	printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
->>>>>>> main
 			
 			//midden
 			blauw += arr[(i**bre*3)+j];
@@ -375,16 +318,11 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 			filtered[(i**bre*3)+j]   = blauw;
 			filtered[(i**bre*3)+j+1] = groen;
 			filtered[(i**bre*3)+j+2] = rood;
-			
-		//	printf("%x %x %x | \t",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 		}
 	}	
 	
-	printf("\n\n");
-	printf("2");
 	fwrite(head, 1, 54, out); 
 	fwrite(filtered, 1, *grootte, out);
 	
-	fclose(out);
-	
+	fclose(out);	
 }
