@@ -9,19 +9,17 @@
 
 #define OUTPUT_Name "output.BMP"
 
+
 void intro();
 void help();
 void HeaderLezen();
 void ImageLezen();
 void FilterBw();
 void FilterBlur();
-//void FileAanmaken();
-
 
 
 int main(int argc, char *argv[])
 {
-	
 	unsigned char bmpHeader[54] = {0};
 	unsigned char *array =NULL;
 	signed int *breedte = (int*) malloc(sizeof(int));
@@ -29,8 +27,6 @@ int main(int argc, char *argv[])
 	int *padding = (int*) malloc(sizeof(int));
 	int *imagesize = (int*) malloc(sizeof(int));
 	FILE *path = NULL;
-	char *filename = "bw.bmp";
-	
 	
 	intro();
 
@@ -39,54 +35,34 @@ int main(int argc, char *argv[])
 		system("cls");
 		intro();
 		help();
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
 		path = fopen(argv[1], "rb");
+		if(path == NULL) //Test of het open van de file gelukt is!
+		{
+			printf("Something went wrong while trying to open %s\n", argv[1]);
+			return -1;
+		}
 	}
-
-	if(path == NULL) //Test of het open van de file gelukt is!
-    {
-        printf("Something went wrong while trying to open %s\n", argv[1]);
-        return -1;
-    }
-
-	//printf("0\n");
+	
 	HeaderLezen(path, bmpHeader, hoogte, breedte);
-	//printf("%d", *hoogte);
-	*padding = 0 /**breedte *3 % 4*/;
+	*padding = 0;
 	*imagesize = *hoogte**breedte*3;
-	array = (unsigned char *) malloc(imagesize);
+	array = (unsigned char *) malloc(*imagesize);
+	
+	
 	if(array == NULL)
 	{
 		printf("mem alloc failed");
 		exit(EXIT_FAILURE);
 	}
-	//printf("%d\n", *imagesize);
-	//unsigned char image[*breedte*3][*hoogte];
 	
 	ImageLezen(path, breedte, hoogte, imagesize, padding, array);
 	
-	for(int i=0; i>54; i++)
-	{
-		printf("%d", bmpHeader);
-	}
-	printf("%d\n", *breedte);
-	printf("%d\n", *hoogte);
-	printf("%d\n", *imagesize);
-	printf("%d\n", *padding);
-	for(int i=0; i<*imagesize; i++)
-	{
-		printf("%d", array[i]);
-	}
-	printf("%s\n", filename);
-	
-	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array, filename);
+	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
 	FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
-	
-	//FileAanmaken(filename);
-	
-	//4 - (*breedte *24 % 32);
 	
 	free(breedte);
 	free(hoogte);
@@ -102,20 +78,18 @@ int main(int argc, char *argv[])
 void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *b)
 {
 	//header inlezen
-	//printf("1\n");
 	fread(header, 1, 54, filef);
 	
 	// haal de filetype, hoogte en breedte uit de header
-	//printf("2\n");
 	char filetype[2]="";
 
+	//breedte nemen
     *b =(header[21] << 24) | (header[20] << 16) | (header[19] << 8) | (header[18]);
 	
-    //printf("de breedte van mijn afbeeding is = %d \n", *b);
+	//hoogte nemen
     *h = (header[25] << 24) | (header[24] << 16) | (header[23] << 8) | (header[22]);
-    //printf("de breedte van mijn afbeeding is = %d \n", *h);
-
-	//printf("%d \t %p\n", *b, b);
+    
+	
 	int bitformat = *(int*)&header[28];
 	
 	strncpy(filetype,(char *)   header, 2);
@@ -129,31 +103,21 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	{
 		printf("bitmapfile is niet 24 bits\n");
 	}
-	/*for(int i=0; i<54; i++)
-	{
-		putchar(header[i]);
-	}
-	printf("\n3\n");*/
 }
 
-//test git
 
 void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
-	
-	//printf("\n\n%d\n\n",*pad);
-	//char input =0;
-	
 	if(arr == NULL)
 	{
 		printf("mem alloc failed");
 		exit(EXIT_FAILURE);
 	}
 	
-	//printf("0\n");
+	
 	fread(arr, 1, *grootte, fp);
-	//printf("1\n");
-	//printf("%d", *grootte);
+	
+	
 	for(int i=0; i<*grootte; i++)
 	{
 		printf("%x ", arr[i]);
@@ -168,23 +132,10 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 			{
 				printf(" | ");
 			}
-			//afbeelding[i][j] = arr[(i**bre*3)+j];
 			printf("%x ",arr[(i**bre*3)+j]);
 		}
 		printf("\n\n");
 	}
-
-/*	printf("\n\n");
-	for(int i=0; i<*ho; i++)
-	{
-		for(int j=0; j<*bre*3; j++)
-		{
-			printf("%x ",afbeelding[i][j]);
-		}
-		printf("\n\n");
-	}
-	printf("\n\n");
-*/
 }
 
 
@@ -237,28 +188,18 @@ void help()
 	printf("WH				    pas WARHOLfilter toe.\n");
 }
 
-
-// werkt nog niet, output nakijken (shifts)
-/*void FileAanmaken(char *filename)
-{
-	FILE  * out = fopen(filename, "wb");
-	
-	fwrite("Iets random whatever", 1, 19, out); 
-
-	fclose(out);
-	
-}*/
-
-void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, char * filename)
+void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 
 //**************
 	//BW filter
 //**************
+
+	unsigned char filtered[*grootte];
 	
 	printf("0");
 	
-	FILE  * out = fopen(filename, "wb");
+	FILE  * out = fopen("bw.bmp", "wb");
 	
 	printf("2");
 	
@@ -275,10 +216,6 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 	{
 		for(int j=0; j<*bre*3; j+=3)
 		{
-			if(j%3==0)
-			{
-			//	printf(" | ");
-			}
 			pixel = pixel + arr[(i**bre*3)+j];
 			pixel = pixel + arr[(i**bre*3)+j+1];
 			pixel = pixel + arr[(i**bre*3)+j+2];
@@ -286,25 +223,18 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 
 			pixel = pixel / 3;
 
-			arr[(i**bre*3)+j] = pixel;
-			arr[(i**bre*3)+j+1] = pixel;
-			arr[(i**bre*3)+j+2] = pixel;
+			filtered[(i**bre*3)+j] = pixel;
+			filtered[(i**bre*3)+j+1] = pixel;
+			filtered[(i**bre*3)+j+2] = pixel;
 
-			printf("%x %x %x | \n\n",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 			pixel =0;
 		}
-
-
-		//printf("\n\n");
 	}
 	
-	printf("\n\n");
-	
 	fwrite(header, 1, 54, out); 
-	fwrite(arr, 1, *grootte, out);
-	
+	fwrite(filtered, 1, *grootte, out);
 	fclose(out);
-
 }
 
 
@@ -313,6 +243,7 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	int blauw = 0;
 	int groen = 0;
 	int rood = 0;
+	unsigned char filtered[*grootte];
 	printf("0");
 	
 	//fclose(out);
@@ -685,18 +616,18 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 				}
 			}
 			//gem toekenen
-			arr[(i**bre*3)+j]   = blauw;
-			arr[(i**bre*3)+j+1] = groen;
-			arr[(i**bre*3)+j+2] = rood;
+			filtered[(i**bre*3)+j]   = blauw;
+			filtered[(i**bre*3)+j+1] = groen;
+			filtered[(i**bre*3)+j+2] = rood;
 			
-			printf("%x %x %x | \t",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+			printf("%x %x %x | \t",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 		}
 	}	
 	
 	printf("\n\n");
 	printf("2");
 	fwrite(head, 1, 54, out); 
-	fwrite(arr, 1, *grootte, out);
+	fwrite(filtered, 1, *grootte, out);
 	
 	fclose(out);
 	
