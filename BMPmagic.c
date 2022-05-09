@@ -15,16 +15,13 @@
 
 #define OUTPUT_Name "output.BMP"
 
-<<<<<<< HEAD
 /*
 * Omschrijving: Introductiescherm
 * @param:   nvt
 * @param: nvt
 * @return:  nvt
 */
-=======
 
->>>>>>> main
 void intro();
 
 void help();
