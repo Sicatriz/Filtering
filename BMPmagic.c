@@ -4,7 +4,7 @@
 * Description: *** BMP MAGIC || FILTERS *** taak C-programeren2 1EAIC 2021-2022
 */
 
-// gcc -Wall -pedantic BMPmagic.c -o run
+// cls
 // SEBBE run C:\Users\sebbe\Desktop\test.bmp
 // MIGUEL run test.bmp
 
@@ -130,7 +130,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	
 	fread(arr, 1, *grootte, fp);
 	
-	
+/*	
 	for(int i=0; i<*grootte; i++)
 	{
 		printf("%x ", arr[i]);
@@ -139,7 +139,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	
 	for(int i=0; i<*ho; i++)
 	{
-		for(int j=0; j<*bre*3/*+*pad*/; j++)
+		for(int j=0; j<*bre*3; j++)
 		{
 			if(j%3==0)
 			{
@@ -149,6 +149,7 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 		}
 		printf("\n\n");
 	}
+*/
 }
 
 
@@ -232,7 +233,7 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 			pixel = pixel + arr[(i**bre*3)+j];
 			pixel = pixel + arr[(i**bre*3)+j+1];
 			pixel = pixel + arr[(i**bre*3)+j+2];
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+		//	printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
 
 			pixel = pixel / 3;
 
@@ -240,7 +241,7 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 			filtered[(i**bre*3)+j+1] = pixel;
 			filtered[(i**bre*3)+j+2] = pixel;
 
-			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
+		//	printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 			pixel =0;
 		}
 	}
@@ -275,14 +276,14 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	
 	for(int i=0; i<*ho; i++)
 	{
-		printf("\n\n");
+	//	printf("\n\n");
 		for(int j=0; j<*bre*3; j+=3)
 		{
 			
 			blauw = 0;
 			groen = 0;
 			rood = 0;
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
+		//	printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]);
 			
 			//bovenste pixels
 			if(i==0)
@@ -633,7 +634,7 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 			filtered[(i**bre*3)+j+1] = groen;
 			filtered[(i**bre*3)+j+2] = rood;
 			
-			printf("%x %x %x | \t",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
+		//	printf("%x %x %x | \t",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]);
 		}
 	}	
 	
