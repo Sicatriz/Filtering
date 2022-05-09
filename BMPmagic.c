@@ -1,3 +1,9 @@
+/*
+* Author(s): Sebbe Gerits & Miguel Nunez
+* Date: 6/12/2021
+* Description: *** BMP MAGIC || FILTERS *** taak C-programeren2 1EAIC 2021-2022
+*/
+
 // gcc -Wall -pedantic BMPmagic.c -o run
 // SEBBE run C:\Users\sebbe\Desktop\test.bmp
 // MIGUEL run test.bmp
@@ -9,7 +15,14 @@
 
 #define OUTPUT_Name "output.BMP"
 
+/*
+* Omschrijving: Introductiescherm
+* @param:   nvt
+* @param: nvt
+* @return:  nvt
+*/
 void intro();
+
 void help();
 void HeaderLezen();
 void ImageLezen();
