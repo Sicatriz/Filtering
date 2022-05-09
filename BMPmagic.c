@@ -7,7 +7,7 @@
 #include <string.h>
 #include <windows.h>
 
-#define OUTPUT "output.BMP"
+#define OUTPUT_Name "output.BMP"
 
 void intro();
 void help();
@@ -15,6 +15,7 @@ void HeaderLezen();
 void ImageLezen();
 void FilterBw();
 void FilterBlur();
+//void FileAanmaken();
 
 
 
@@ -28,7 +29,8 @@ int main(int argc, char *argv[])
 	int *padding = (int*) malloc(sizeof(int));
 	int *imagesize = (int*) malloc(sizeof(int));
 	FILE *path = NULL;
-	FILE *output = NULL;
+	char *filename = "bw.bmp";
+	
 	
 	intro();
 
@@ -41,7 +43,6 @@ int main(int argc, char *argv[])
 	else
 	{
 		path = fopen(argv[1], "rb");
-		output = fopen(OUTPUT, "wb");
 	}
 
 	if(path == NULL) //Test of het open van de file gelukt is!
@@ -55,13 +56,35 @@ int main(int argc, char *argv[])
 	//printf("%d", *hoogte);
 	*padding = 0 /**breedte *3 % 4*/;
 	*imagesize = *hoogte**breedte*3;
-	array = (unsigned char *) malloc(sizeof(imagesize));
+	array = (unsigned char *) malloc(imagesize);
+	if(array == NULL)
+	{
+		printf("mem alloc failed");
+		exit(EXIT_FAILURE);
+	}
 	//printf("%d\n", *imagesize);
 	//unsigned char image[*breedte*3][*hoogte];
 	
-	ImageLezen(path, breedte, hoogte, imagesize, padding, array/*, image*/);
-	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array, output/*, image*/);
-	FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array, output);
+	ImageLezen(path, breedte, hoogte, imagesize, padding, array);
+	
+	for(int i=0; i>54; i++)
+	{
+		printf("%d", bmpHeader);
+	}
+	printf("%d\n", *breedte);
+	printf("%d\n", *hoogte);
+	printf("%d\n", *imagesize);
+	printf("%d\n", *padding);
+	for(int i=0; i<*imagesize; i++)
+	{
+		printf("%d", array[i]);
+	}
+	printf("%s\n", filename);
+	
+	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array, filename);
+	FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
+	
+	//FileAanmaken(filename);
 	
 	//4 - (*breedte *24 % 32);
 	
@@ -70,7 +93,7 @@ int main(int argc, char *argv[])
 	free(padding);
 	free(imagesize);
 	free(array);
-	fclose(output);
+	
 	fclose(path);
 	
 	return 0;
@@ -115,7 +138,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 
 //test git
 
-void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr/*, unsigned char afbeelding[*bre*3][*ho]*/)
+void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	
 	//printf("\n\n%d\n\n",*pad);
@@ -216,7 +239,17 @@ void help()
 
 
 // werkt nog niet, output nakijken (shifts)
-void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, FILE *out/*, unsigned char afbeelding[*bre*3][*ho]*/)
+/*void FileAanmaken(char *filename)
+{
+	FILE  * out = fopen(filename, "wb");
+	
+	fwrite("Iets random whatever", 1, 19, out); 
+
+	fclose(out);
+	
+}*/
+
+void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, char * filename)
 {
 
 //**************
@@ -225,11 +258,7 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 	
 	printf("0");
 	
-	fclose(out);
-	
-	printf("1");
-	
-	out = fopen("Bw.BMP", "wb");
+	FILE  * out = fopen(filename, "wb");
 	
 	printf("2");
 	
@@ -279,18 +308,18 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 }
 
 
-void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr, FILE* out)
+void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	int blauw = 0;
 	int groen = 0;
 	int rood = 0;
 	printf("0");
 	
-	fclose(out);
+	//fclose(out);
 	
 	printf("1");
 	
-	out = fopen("Blur.BMP", "wb");
+	FILE * out = fopen("Blur.BMP", "wb+");
 	
 	printf("2");
 	
@@ -665,7 +694,7 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	}	
 	
 	printf("\n\n");
-	
+	printf("2");
 	fwrite(head, 1, 54, out); 
 	fwrite(arr, 1, *grootte, out);
 	
