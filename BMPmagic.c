@@ -4,7 +4,6 @@
 * Description: *** BMP MAGIC || FILTERS *** taak C-programeren2 1EAIC 2021-2022
 */
 
-// cls
 // SEBBE run C:\Users\sebbe\Desktop\test.bmp
 // MIGUEL run test.bmp
 
@@ -26,6 +25,9 @@ void HeaderLezen();
 void ImageLezen();
 void FilterBw();
 void FilterBlur();
+void FilterBlauw();
+void FilterGroen();
+void FilterRood();
 
 int main(int argc, char *argv[])
 {
@@ -72,6 +74,10 @@ int main(int argc, char *argv[])
 	
 	FilterBw(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
 	FilterBlur(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
+	
+	FilterBlauw(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
+	FilterGroen(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
+	FilterRood(path, bmpHeader, breedte, hoogte, imagesize, padding, array);
 	
 	free(breedte);
 	free(hoogte);
@@ -326,3 +332,101 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 	
 	fclose(out);	
 }
+
+
+//alleen blauw 
+void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
+{ 
+	unsigned char filtered[*grootte];
+	FILE* out = fopen("outputBlauw.BMP", "wb"); 
+	 
+	if(out == NULL) //Test of het open van de file gelukt is! 
+    { 
+        printf("Something went wrong while trying to open %s\n", "outputBlauw.BMP"); 
+        exit(EXIT_FAILURE); 
+    } 
+	 
+	for(int i=0; i<*ho; i++) 
+	{ 
+		for(int j=0; j<*bre*3; j+=3) 
+		{ 
+			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
+ 
+			filtered[(i**bre*3)+j] = arr[(i**bre*3)+j];
+			filtered[(i**bre*3)+j+1] = 0; 
+			filtered[(i**bre*3)+j+2] = 0; 
+ 
+			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
+		} 
+	} 
+	 
+	fwrite(header, 1, 54, out); 
+	fwrite(filtered, 1, *grootte, out); 
+	 
+	fclose(out); 
+} 
+
+//alleen groen 
+void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
+{ 
+	unsigned char filtered[*grootte];
+	FILE  * out = fopen("groen.bmp", "wb");
+
+	if(out == NULL) //Test of het open van de file gelukt is! 
+    { 
+        printf("Something went wrong while trying to open %s\n", "outputGroen.BMP"); 
+        exit(EXIT_FAILURE); 
+    } 
+	 
+	for(int i=0; i<*ho; i++) 
+	{ 
+		for(int j=0; j<*bre*3; j+=3) 
+		{ 
+			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
+ 
+			filtered[(i**bre*3)+j+1] = arr[(i**bre*3)+j+1];
+			filtered[(i**bre*3)+j] = 0; 
+			filtered[(i**bre*3)+j+2] = 0; 
+ 
+			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
+		} 
+	} 
+	 
+	fwrite(header, 1, 54, out); 
+	fwrite(filtered, 1, *grootte, out); 
+	 
+	fclose(out); 
+} 
+
+//alleen rood 
+void FilterRood(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
+{ 
+	unsigned char filtered[*grootte];
+	FILE  * out = fopen("rood.bmp", "wb");
+
+	if(out == NULL) //Test of het open van de file gelukt is! 
+    { 
+        printf("Something went wrong while trying to open %s\n", "outputRood.BMP"); 
+        exit(EXIT_FAILURE); 
+    } 
+	 
+	for(int i=0; i<*ho; i++) 
+	{ 
+		for(int j=0; j<*bre*3; j+=3) 
+		{ 
+			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
+ 
+			filtered[(i**bre*3)+j+2] =  arr[(i**bre*3)+j+2];
+			filtered[(i**bre*3)+j+1] = 0; 
+			filtered[(i**bre*3)+j] = 0; 
+ 
+			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
+		} 
+	} 
+	 
+	fwrite(header, 1, 54, out); 
+	fwrite(filtered, 1, *grootte, out);
+	 
+	fclose(out);
+	 
+} 
