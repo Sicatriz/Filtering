@@ -4,22 +4,13 @@
 * Description: *** BMP MAGIC || FILTERS *** taak C-programeren2 1EAIC 2021-2022
 */
 
-// SEBBE run C:\Users\sebbe\Desktop\test.bmp
-// MIGUEL run test.bmp
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
 
-/*
-* Omschrijving: Introductiescherm
-* @param:   nvt
-* @param: nvt
-* @return:  nvt
-*/
-void intro();
 
+void intro();
 void help();
 void HeaderLezen();
 void ImageLezen();
@@ -63,7 +54,6 @@ int main(int argc, char *argv[])
 	*imagesize = *hoogte**breedte*3;
 	array = (unsigned char *) malloc(*imagesize);
 	
-	
 	if(array == NULL)
 	{
 		printf("mem alloc failed");
@@ -84,12 +74,19 @@ int main(int argc, char *argv[])
 	free(padding);
 	free(imagesize);
 	free(array);
-	
 	fclose(path);
 	
 	return 0;
 }
 
+/*
+* Omschrijving: Leest de header uit van de BMP en haalt filetype, hoogte en breedte uit de header.
+* @param:   FILE = de inputfile
+* @param: header = de uit te lezen header van de inputfile
+* @param: *h = pointer naar hoogte
+* @param: *b = pointer naar breedte
+* @return:  0
+*/
 void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *b)
 {
 	//header inlezen
@@ -119,6 +116,16 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 	}
 }
 
+/*
+* Omschrijving: Leest de header uit van de BMP en haalt filetype, hoogte en breedte uit de header.
+* @param:   FILE = de inputfile
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/
 void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	if(arr == NULL)
@@ -131,6 +138,10 @@ void ImageLezen(FILE* fp, int * bre, int * ho, int* grootte, int* pad, unsigned 
 	
 }
 
+/*
+* Omschrijving: Intro scherm van het programma
+* @return:  0
+*/
 void intro()
 {
 	system("color a");
@@ -162,6 +173,10 @@ void intro()
 
 }
 
+/*
+* Omschrijving: Help functie
+* @return:  0
+*/
 void help()
 {
 	printf("\n\n********************************************\n\n");
@@ -171,9 +186,19 @@ void help()
 	printf("RUN [inputfile.bmp]\n\n");
 }
 
+/*
+* Omschrijving: verwerken van de zwart/wit filter
+* @param:   FILE = de inputfile
+* @param: *header = pointer naar de header van het bestand
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/
 void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
-
 //**************
 	//BW filter
 //**************
@@ -212,6 +237,17 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 	fclose(out);
 }
 
+/*
+* Omschrijving: verwerken van de smooth filter
+* @param:   FILE = de inputfile
+* @param: *head = pointer naar de header van het bestand
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/
 void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr)
 {
 	int blauw = 0;
@@ -334,7 +370,17 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 }
 
 
-//alleen blauw 
+/*
+* Omschrijving: verwerken van de blauwfilter
+* @param:   FILE = de inputfile
+* @param: *header = pointer naar de header van het bestand
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/
 void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
 { 
 	unsigned char filtered[*grootte];
@@ -349,14 +395,10 @@ void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 	for(int i=0; i<*ho; i++) 
 	{ 
 		for(int j=0; j<*bre*3; j+=3) 
-		{ 
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
- 
+		{  
 			filtered[(i**bre*3)+j] = arr[(i**bre*3)+j];
 			filtered[(i**bre*3)+j+1] = 0; 
 			filtered[(i**bre*3)+j+2] = 0; 
- 
-			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
 		} 
 	} 
 	 
@@ -366,7 +408,17 @@ void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 	fclose(out); 
 } 
 
-//alleen groen 
+/*
+* Omschrijving: verwerken van de groenfilter
+* @param:   FILE = de inputfile
+* @param: *header = pointer naar de header van het bestand
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/ 
 void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
 { 
 	unsigned char filtered[*grootte];
@@ -382,13 +434,9 @@ void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 	{ 
 		for(int j=0; j<*bre*3; j+=3) 
 		{ 
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
- 
 			filtered[(i**bre*3)+j+1] = arr[(i**bre*3)+j+1];
 			filtered[(i**bre*3)+j] = 0; 
 			filtered[(i**bre*3)+j+2] = 0; 
- 
-			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
 		} 
 	} 
 	 
@@ -398,7 +446,17 @@ void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 	fclose(out); 
 } 
 
-//alleen rood 
+/*
+* Omschrijving: verwerken van de roodfilter
+* @param:   FILE = de inputfile
+* @param: *header = pointer naar de header van het bestand
+* @param: *bre = pointer naar breedte
+* @param: *ho = pointer naar hoogte
+* @param: grootte = grootte x breedte x 3 of imagesize
+* @param: *pad = facultatief om padding toe te passen
+* @param: *arr = de array waarin de afbeelding opgeslaan wordt (zonder header, deze houden we apart bij)
+* @return:  0
+*/
 void FilterRood(FILE* fp, unsigned char* header, int * bre, int * ho, int* grootte, int* pad, unsigned char *arr) 
 { 
 	unsigned char filtered[*grootte];
@@ -413,14 +471,10 @@ void FilterRood(FILE* fp, unsigned char* header, int * bre, int * ho, int* groot
 	for(int i=0; i<*ho; i++) 
 	{ 
 		for(int j=0; j<*bre*3; j+=3) 
-		{ 
-			printf("%x %x %x | ",arr[(i**bre*3)+j], arr[(i**bre*3)+j+1], arr[(i**bre*3)+j+2]); 
- 
+		{
 			filtered[(i**bre*3)+j+2] =  arr[(i**bre*3)+j+2];
 			filtered[(i**bre*3)+j+1] = 0; 
 			filtered[(i**bre*3)+j] = 0; 
- 
-			printf("%x %x %x | \n\n",filtered[(i**bre*3)+j], filtered[(i**bre*3)+j+1], filtered[(i**bre*3)+j+2]); 
 		} 
 	} 
 	 
