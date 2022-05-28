@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
 /*
 * Omschrijving: Leest de header uit van de BMP en haalt filetype, hoogte en breedte uit de header.
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: header = de uit te lezen header van de inputfile
 * @param: *h = pointer naar hoogte
 * @param: *b = pointer naar breedte
@@ -118,7 +118,7 @@ void HeaderLezen(FILE *filef, unsigned char* header, signed int *h, signed int *
 
 /*
 * Omschrijving: Leest de header uit van de BMP en haalt filetype, hoogte en breedte uit de header.
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
 * @param: grootte = grootte x breedte x 3 of imagesize
@@ -188,7 +188,7 @@ void help()
 
 /*
 * Omschrijving: verwerken van de zwart/wit filter
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *header = pointer naar de header van het bestand
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
@@ -239,7 +239,7 @@ void FilterBw(FILE* fp, unsigned char *header, int * bre, int * ho, int* grootte
 
 /*
 * Omschrijving: verwerken van de smooth filter
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *head = pointer naar de header van het bestand
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
@@ -372,7 +372,7 @@ void FilterBlur(FILE* fp, unsigned char* head, int * bre, int * ho, int* grootte
 
 /*
 * Omschrijving: verwerken van de blauwfilter
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *header = pointer naar de header van het bestand
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
@@ -410,7 +410,7 @@ void FilterBlauw(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 
 /*
 * Omschrijving: verwerken van de groenfilter
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *header = pointer naar de header van het bestand
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
@@ -448,7 +448,7 @@ void FilterGroen(FILE* fp, unsigned char* header, int * bre, int * ho, int* groo
 
 /*
 * Omschrijving: verwerken van de roodfilter
-* @param:   FILE = de inputfile
+* @param: *fp = de inputfile
 * @param: *header = pointer naar de header van het bestand
 * @param: *bre = pointer naar breedte
 * @param: *ho = pointer naar hoogte
